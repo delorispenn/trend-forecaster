@@ -2,7 +2,6 @@
 // This runs on Netlify's servers, not in the browser
 
 export async function handler(event, context) {
-  // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -11,10 +10,8 @@ export async function handler(event, context) {
   }
 
   try {
-    const { season, category } = JSON.parse(event.body);
+    const { audience, season, category } = JSON.parse(event.body);
     
-    // Get API key from environment variable
-    // Note: Netlify functions access env vars without VITE_ prefix
     const apiKey = process.env.VITE_ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY;
     
     if (!apiKey) {
@@ -24,7 +21,6 @@ export async function handler(event, context) {
       };
     }
 
-    // Call Anthropic API from server-side
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -34,10 +30,10 @@ export async function handler(event, context) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 4000,
+        max_tokens: 2000,
         messages: [{
           role: 'user',
-          content: generateTrendPrompt(season, category)
+          content: generateTrendPrompt(audience, season, category)
         }]
       })
     });
@@ -61,45 +57,84 @@ export async function handler(event, context) {
   }
 }
 
-function generateTrendPrompt(season, category) {
-  return `You are analyzing teen girl trends for Josie's Journal, targeting 11-17 year olds.
+function generateTrendPrompt(audience, season, category) {
+  const categoryInfo = {
+    // Teen Girls categories
+    'tops': 'tops and shirts (t-shirts, crop tops, blouses, hoodies, sweaters)',
+    'bottoms': 'bottoms and pants (jeans, skirts, shorts, leggings, pants)',
+    'shoes': 'shoes and footwear (sneakers, boots, sandals, heels)',
+    'accessories': 'accessories (jewelry, bags, phone cases, hair accessories, belts)',
+    'beauty': 'beauty and makeup (skincare products, makeup, hair products, specific brands)',
+    
+    // Moms categories
+    'mental-load': 'mental load and invisible labor challenges',
+    'time-management': 'time management and productivity struggles',
+    'self-care': 'self-care, burnout prevention, and wellness needs',
+    'parenting': 'parenting challenges and concerns',
+    'organization': 'home organization and systems'
+  };
 
-SEASON: ${season} (3+ months from now)
-CATEGORY: ${category === 'all' ? 'fashion and products' : category}
+  const audienceInfo = {
+    'teen-girls': 'teen girls ages 13-17',
+    'moms': 'millennial moms ages 30-50'
+  };
 
-Based on current signals, identify 3-4 ${category} trends that will be relevant for ${season}.
+  if (audience === 'teen-girls') {
+    return `Identify 3-4 trending ${categoryInfo[category]} for ${audienceInfo[audience]} for ${season}.
 
-IMPORTANT REQUIREMENTS:
-${category === 'fashion' || category === 'all' ? `
-For FASHION trends:
-- Break down into SPECIFIC subcategories: vintage styles, jewelry trends, denim/pants trends, accessories, occasion-specific (school vs weekend)
-- Include WHERE to buy at major retailers: Amazon, Target, Walmart, Shein
-- Price points with SPECIFIC products and prices
-- Example: "Baggy cargo pants at Target ($25-40), Amazon Essentials ($20-30)"` : ''}
+Focus on:
+- Specific items/styles that are trending NOW
+- Where to buy (Amazon, Target, Walmart, Shein, specific stores)
+- Price ranges
+- What makes it trending (TikTok, Instagram, Pinterest)
 
-${category === 'products' || category === 'all' ? `
-For PRODUCT trends:
-- SPECIFIC PRODUCTS available at major retailers
-- Exact product names (e.g., "Maybelline Sky High Mascara in Black")
-- WHERE TO BUY: Amazon, Target, Walmart, Ulta, Sephora with prices
-- Current availability status` : ''}
+Return a JSON array with 3-4 objects:
+[{
+  "id": 1,
+  "category": "${category}",
+  "trend": "Short, catchy trend name",
+  "season": "${season}",
+  "momentum": "rising/peak/emerging/steady",
+  "confidence": 85,
+  "ageGroup": "teen (13-17)",
+  "platforms": ["TikTok", "Pinterest"],
+  "keyPieces": ["specific item 1", "specific item 2", "specific item 3"],
+  "signals": ["why it's trending - data point 1", "data point 2"],
+  "contentOpportunity": 90,
+  "josiesInsight": "Why this matters for teen girls",
+  "suggestedContent": ["content idea 1", "content idea 2", "content idea 3"],
+  "whyNow": "Why create content about this now"
+}]
 
-Return ONLY a valid JSON array of 3-4 trend objects. Each trend must include:
-- id (number)
-- category ("fashion" or "products")
-- trend (creative name)
-- subcategory (for fashion: "vintage", "jewelry", "denim", "accessories", "school-style", "weekend-style")
-- season
-- momentum ("rising", "peak", "emerging", "steady")
-- confidence (0-100)
-- ageGroup
-- platforms (array)
-- keyPieces or specificProducts (array with detailed info)
-- signals (array of 3-4 data points)
-- contentOpportunity (0-100)
-- josiesInsight (2-3 sentences)
-- suggestedContent (array of 4 content ideas)
-- whyNow (timing guidance)
+Return ONLY valid JSON, no markdown.`;
+  } else {
+    // Moms audience
+    return `Identify 3-4 trending topics or challenges related to ${categoryInfo[category]} that millennial moms (30-50) are facing or discussing for ${season}.
 
-No markdown formatting, just valid JSON.`;
+Focus on:
+- Specific pain points or conversations happening NOW
+- How the Mom Dashboard app could help address these
+- What moms are searching for or talking about on social media
+- Practical, actionable insights
+
+Return a JSON array with 3-4 objects:
+[{
+  "id": 1,
+  "category": "${category}",
+  "trend": "Short, specific challenge or topic name",
+  "season": "${season}",
+  "momentum": "rising/peak/emerging/steady",
+  "confidence": 85,
+  "ageGroup": "moms (30-50)",
+  "platforms": ["Facebook Groups", "Pinterest", "Instagram"],
+  "keyPieces": ["specific aspect 1", "specific aspect 2", "specific aspect 3"],
+  "signals": ["why this is trending - data point 1", "data point 2"],
+  "contentOpportunity": 90,
+  "josiesInsight": "How Mom Dashboard could help with this",
+  "suggestedContent": ["feature idea 1", "content idea 2", "solution idea 3"],
+  "whyNow": "Why this is relevant now for ${season}"
+}]
+
+Return ONLY valid JSON, no markdown.`;
+  }
 }
