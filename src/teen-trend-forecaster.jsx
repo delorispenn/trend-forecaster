@@ -465,9 +465,9 @@ const TrendForecaster = () => {
                     <button
                       onClick={() => searchProductsForTrend(index)}
                       disabled={searchingProducts === index}
-                      className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2.5 rounded-lg hover:from-blue-600 hover:to-purple-700 transition font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="bg-[#cd7f77] text-white px-6 py-2.5 rounded-lg hover:bg-[#b86d65] transition font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {searchingProducts === index ? 'Searching Marketplaces...' : '🛍️ Find Products at Amazon, Target & Walmart'}
+                      {searchingProducts === index ? 'Searching Marketplaces...' : 'Find Products at Amazon, Target & Walmart'}
                     </button>
                   </div>
                 )}
@@ -475,10 +475,10 @@ const TrendForecaster = () => {
                 {/* Product Results */}
                 {trend.products && (
                   <div className="mt-5 pt-5 border-t-2 border-[#cd7f77]">
-                    <h4 className="font-semibold text-[#373737] mb-3 text-lg">🛍️ Products Available at Stores</h4>
+                    <h4 className="font-semibold text-[#373737] mb-3 text-lg">Products Available at Stores</h4>
                     <div className="grid gap-3">
                       {trend.products.map((product, i) => (
-                        <div key={i} className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-4 border-2 border-purple-200">
+                        <div key={i} className="bg-[#f9f1f0] rounded-lg p-4 border-2 border-[#e0e0e0]">
                           <div className="flex items-start justify-between mb-2">
                             <div className="flex-1">
                               <h5 className="font-bold text-[#373737] text-base mb-1">{product.name}</h5>
@@ -488,26 +488,35 @@ const TrendForecaster = () => {
                             </div>
                             {product.price && (
                               <div className="text-right ml-3">
-                                <div className="text-2xl font-bold text-purple-700">{product.price}</div>
+                                <div className="text-2xl font-bold text-[#cd7f77]">{product.price}</div>
                               </div>
                             )}
                           </div>
                           
                           {product.stores && product.stores.length > 0 && (
                             <div className="flex flex-wrap gap-2 mt-3">
-                              {product.stores.map((store, j) => (
-                                <a
-                                  key={j}
-                                  href={store.url || '#'}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-lg border-2 border-purple-300 hover:border-purple-500 hover:bg-purple-50 transition font-semibold text-sm"
-                                >
-                                  <span>{store.name}</span>
-                                  {store.price && <span className="text-purple-700">{store.price}</span>}
-                                  {store.url && <span>→</span>}
-                                </a>
-                              ))}
+                              {product.stores.map((store, j) => {
+                                const storeUrls = {
+                                  'Amazon': `https://www.amazon.com/s?k=${encodeURIComponent(product.name + ' ' + (product.brand || ''))}`,
+                                  'Target': `https://www.target.com/s?searchTerm=${encodeURIComponent(product.name + ' ' + (product.brand || ''))}`,
+                                  'Walmart': `https://www.walmart.com/search?q=${encodeURIComponent(product.name + ' ' + (product.brand || ''))}`
+                                };
+                                const url = store.url || storeUrls[store.name] || '#';
+                                
+                                return (
+                                  <a
+                                    key={j}
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-lg border-2 border-[#cd7f77] hover:bg-[#cd7f77] hover:text-white transition font-semibold text-sm text-[#373737]"
+                                  >
+                                    <span>{store.name}</span>
+                                    {store.price && <span className="font-bold">{store.price}</span>}
+                                    <span>→</span>
+                                  </a>
+                                );
+                              })}
                             </div>
                           )}
                           
