@@ -14,7 +14,8 @@ export async function handler(event, context) {
     const { season, category } = JSON.parse(event.body);
     
     // Get API key from environment variable
-    const apiKey = process.env.VITE_ANTHROPIC_API_KEY;
+    // Note: Netlify functions access env vars without VITE_ prefix
+    const apiKey = process.env.VITE_ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY;
     
     if (!apiKey) {
       return {
