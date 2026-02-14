@@ -25,6 +25,7 @@ const TrendForecaster = () => {
         { id: 'shoes', name: 'Shoes', description: 'Sneakers, boots, sandals' },
         { id: 'accessories', name: 'Accessories', description: 'Jewelry, bags, phone cases, hair accessories' },
         { id: 'beauty', name: 'Beauty & Makeup', description: 'Skincare, makeup products, trends' },
+        { id: 'products', name: 'Trending Products', description: 'Hot products from Amazon, Target, Walmart' },
       ]
     },
     'moms': {
