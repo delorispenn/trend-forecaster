@@ -30,7 +30,7 @@ export async function handler(event, context) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
+        max_tokens: 1500,
         messages: [{
           role: 'user',
           content: generateTrendPrompt(audience, season, category)
@@ -58,156 +58,110 @@ export async function handler(event, context) {
 }
 
 function generateTrendPrompt(audience, season, category) {
-  const categoryInfo = {
-    // Teen Girls categories
-    'tops': 'tops and shirts (t-shirts, crop tops, blouses, hoodies, sweaters)',
-    'bottoms': 'bottoms and pants (jeans, skirts, shorts, leggings, pants)',
-    'shoes': 'shoes and footwear (sneakers, boots, sandals, heels)',
-    'accessories': 'accessories (jewelry, bags, phone cases, hair accessories, belts)',
-    'beauty': 'beauty and makeup (skincare products, makeup, hair products, specific brands)',
-    'products': 'trending products and items (tech, lifestyle, room decor, accessories)',
-    
-    // Moms categories
-    'mental-load': 'mental load and invisible labor challenges',
-    'time-management': 'time management and productivity struggles',
-    'self-care': 'self-care, burnout prevention, and wellness needs',
-    'parenting': 'parenting challenges and concerns',
-    'organization': 'home organization and systems'
-  };
-
-  const audienceInfo = {
-    'teen-girls': 'teen girls ages 13-17',
-    'moms': 'millennial moms ages 30-50'
-  };
-
   if (audience === 'teen-girls') {
     if (category === 'products') {
-      // Special prompt for products category
-      return `Identify 4-5 specific trending products for ${audienceInfo[audience]} for ${season}.
+      // Non-fashion products - search TikTok, Instagram, Snapchat, Google trends
+      return `Search TikTok, Instagram, Snapchat, and Google Search to find 4 trending NON-FASHION products for teen girls (13-17) for ${season}.
 
-CRITICAL: Focus on SPECIFIC PRODUCTS available NOW at major retailers.
+Focus on products that are:
+- Viral on social media (TikTok shop, Instagram reels, Snapchat spotlight)
+- Trending in Google searches
+- Actually available at Amazon, Target, Walmart
+- NON-FASHION: tech accessories, room decor, lifestyle items, school supplies, beauty tools
 
-For each product, provide:
-- Exact product name and brand
-- Where to buy: Amazon, Target, Walmart (with specific availability)
-- Exact current price or price range
-- Why it's trending (TikTok viral, influencer recommended, etc.)
-- What makes it appealing to teen girls
+For each product, include:
+- What platforms it's trending on
+- Why it's going viral
+- Specific products available with prices
+- Which stores carry it
 
-Examples of product types:
-- Tech accessories (phone cases, chargers, LED lights)
-- Room decor (tapestries, fairy lights, organizers)
-- Lifestyle items (water bottles, bags, planners)
-- Beauty tools (hair tools, skincare devices)
-- School/office supplies (pens, notebooks, stickers)
-
-Return a JSON array with 4-5 objects:
+Return a JSON array:
 [{
   "id": 1,
   "category": "products",
-  "trend": "Product name/trend",
+  "trend": "Trending product name/type",
   "season": "${season}",
   "momentum": "rising/peak/emerging/steady",
   "confidence": 85,
   "ageGroup": "teen (13-17)",
-  "platforms": ["TikTok", "Instagram"],
+  "platforms": ["TikTok", "Instagram", "Snapchat"],
   "keyPieces": [
-    "Exact Product 1 - Brand Name at Target $XX",
-    "Exact Product 2 - Brand Name at Amazon $XX",
-    "Exact Product 3 - Brand Name at Walmart $XX"
-  ],
-  "signals": ["TikTok hashtag has X views", "Amazon bestseller in category"],
-  "contentOpportunity": 90,
-  "josiesInsight": "Why teen girls want this",
-  "suggestedContent": ["Haul video idea", "Review idea", "Styling idea"],
-  "whyNow": "Why create content now"
-}]
-
-Return ONLY valid JSON, no markdown.`;
-    } else {
-      // Fashion categories with high fashion + Pinterest influence
-      return `Identify 4-5 trending ${categoryInfo[category]} for ${audienceInfo[audience]} for ${season}.
-
-IMPORTANT: Blend TWO trend sources:
-1. Pinterest/TikTok trends (accessible, teen-friendly, viral aesthetics)
-2. High fashion runway influence (Vogue, Chloé, Ralph Lauren, Miu Miu, The Row, Jacquemus - adapted for teen style and budget)
-
-Look for:
-- What runway trends are trickling down to fast fashion
-- How luxury brands are influencing affordable teen style
-- Pinterest aesthetics that echo high fashion movements
-- TikTok trends inspired by designer collections
-
-For each trend:
-- Specific items/styles trending NOW
-- High fashion inspiration (which designer/brand started this)
-- Where teens can buy it affordably (Amazon, Target, Walmart, Shein, Urban Outfitters, Princess Polly)
-- Price ranges for budget/mid/splurge options
-- Why it's trending (runway influence + social media)
-
-Return a JSON array with 4-5 objects:
-[{
-  "id": 1,
-  "category": "${category}",
-  "trend": "Short trend name (e.g., 'Ballet Core Flats', 'Oversized Blazers')",
-  "season": "${season}",
-  "momentum": "rising/peak/emerging/steady",
-  "confidence": 85,
-  "ageGroup": "teen (13-17)",
-  "platforms": ["TikTok", "Pinterest", "Vogue"],
-  "keyPieces": [
-    "Specific item 1 - Budget option at Target/Walmart $XX",
-    "Specific item 2 - Mid option at Urban Outfitters/Princess Polly $XX",
-    "Specific item 3 - Designer inspiration: Brand Name",
-    "Specific item 4 - Amazon dupe $XX"
+    "Specific product at Amazon $XX",
+    "Specific product at Target $XX",
+    "Specific product at Walmart $XX"
   ],
   "signals": [
-    "Seen on X runway show",
-    "TikTok trend with X views",
-    "Pinterest searches up X%",
-    "Featured in Vogue/Teen Vogue"
+    "TikTok: X million views",
+    "Google Trends: Up X%",
+    "Instagram: X posts"
   ],
   "contentOpportunity": 90,
-  "josiesInsight": "How high fashion meets teen style - why this resonates",
-  "suggestedContent": [
-    "High vs low styling video",
-    "Designer dupe roundup",
-    "How to wear this trend",
-    "Budget styling challenge"
-  ],
-  "whyNow": "Why create content now"
+  "josiesInsight": "Why teens want this",
+  "suggestedContent": ["Unboxing video", "Review", "Haul"],
+  "whyNow": "Timing",
+  "products": [
+    {
+      "name": "Exact Product Name",
+      "brand": "Brand",
+      "price": "$XX.XX",
+      "description": "Why it's viral",
+      "stores": [
+        {"name": "Amazon", "price": "$XX.XX"},
+        {"name": "Target", "price": "$XX.XX"},
+        {"name": "Walmart", "price": "$XX.XX"}
+      ]
+    }
+  ]
 }]
 
-Return ONLY valid JSON, no markdown.`;
-    }
-  } else {
-    // Moms audience (unchanged)
-    return `Identify 4-5 trending topics or challenges related to ${categoryInfo[category]} that millennial moms (30-50) are facing or discussing for ${season}.
+Return ONLY valid JSON.`;
+    } else {
+      // Fashion categories - blend Pinterest/TikTok with high fashion
+      return `Identify 4 trending ${category} for teen girls (13-17) for ${season}.
 
-Focus on:
-- Specific pain points or conversations happening NOW
-- How the Mom Dashboard app could help address these
-- What moms are searching for or talking about on social media
-- Practical, actionable insights
+Blend Pinterest/TikTok trends with high fashion influence (Vogue, designer brands).
 
-Return a JSON array with 4-5 objects:
+Return concise JSON with 4 objects:
 [{
   "id": 1,
   "category": "${category}",
-  "trend": "Short, specific challenge or topic name",
+  "trend": "Trend name",
+  "season": "${season}",
+  "momentum": "rising/peak/emerging/steady",
+  "confidence": 85,
+  "ageGroup": "teen (13-17)",
+  "platforms": ["TikTok", "Pinterest"],
+  "keyPieces": ["item with store & price", "item with store & price", "item with store & price"],
+  "signals": ["trend data 1", "trend data 2"],
+  "contentOpportunity": 90,
+  "josiesInsight": "Why this matters",
+  "suggestedContent": ["idea 1", "idea 2", "idea 3"],
+  "whyNow": "Timing"
+}]
+
+IMPORTANT: Keep response concise. Return ONLY valid JSON.`;
+    }
+  } else {
+    return `Identify 4 topics for millennial moms (30-50) related to ${category} for ${season}.
+
+Return concise JSON with 4 objects:
+[{
+  "id": 1,
+  "category": "${category}",
+  "trend": "Topic name",
   "season": "${season}",
   "momentum": "rising/peak/emerging/steady",
   "confidence": 85,
   "ageGroup": "moms (30-50)",
-  "platforms": ["Facebook Groups", "Pinterest", "Instagram"],
-  "keyPieces": ["specific aspect 1", "specific aspect 2", "specific aspect 3"],
-  "signals": ["why this is trending - data point 1", "data point 2"],
+  "platforms": ["Facebook", "Pinterest"],
+  "keyPieces": ["aspect 1", "aspect 2", "aspect 3"],
+  "signals": ["trend data 1", "trend data 2"],
   "contentOpportunity": 90,
-  "josiesInsight": "How Mom Dashboard could help with this",
-  "suggestedContent": ["feature idea 1", "content idea 2", "solution idea 3"],
-  "whyNow": "Why this is relevant now for ${season}"
+  "josiesInsight": "How Mom Dashboard helps",
+  "suggestedContent": ["idea 1", "idea 2", "idea 3"],
+  "whyNow": "Timing"
 }]
 
-Return ONLY valid JSON, no markdown.`;
+Keep concise. Return ONLY valid JSON.`;
   }
 }

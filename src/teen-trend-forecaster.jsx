@@ -7,6 +7,7 @@ const TrendForecaster = () => {
   const [selectedAudience, setSelectedAudience] = useState('teen-girls');
   const [selectedSeason, setSelectedSeason] = useState('summer-2026');
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [searchingProducts, setSearchingProducts] = useState(null); // Track which trend is searching for products
 
   const seasons = [
     { id: 'summer-2026', name: 'Summer 2026', icon: Sun, months: 'May - Aug' },
@@ -25,7 +26,7 @@ const TrendForecaster = () => {
         { id: 'shoes', name: 'Shoes', description: 'Sneakers, boots, sandals' },
         { id: 'accessories', name: 'Accessories', description: 'Jewelry, bags, phone cases, hair accessories' },
         { id: 'beauty', name: 'Beauty & Makeup', description: 'Skincare, makeup products, trends' },
-        { id: 'products', name: 'Trending Products', description: 'Hot products from Amazon, Target, Walmart' },
+        { id: 'products', name: 'Trending Products', description: 'Tech, room decor, lifestyle items (non-fashion)' },
       ]
     },
     'moms': {
@@ -99,6 +100,49 @@ const TrendForecaster = () => {
     } catch (e) {
       console.error('Failed to parse JSON:', e);
       return [];
+    }
+  };
+
+  const searchProductsForTrend = async (trendIndex) => {
+    setSearchingProducts(trendIndex);
+    
+    try {
+      const trend = trends[trendIndex];
+      
+      const response = await fetch('/.netlify/functions/search-products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          trendName: trend.trend,
+          category: trend.category,
+          season: selectedSeason
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error.message || data.error);
+      }
+      
+      // Add products to this specific trend
+      const productsJson = extractJsonFromResponse(data.content[0].text);
+      const updatedTrends = [...trends];
+      updatedTrends[trendIndex] = {
+        ...updatedTrends[trendIndex],
+        products: productsJson
+      };
+      setTrends(updatedTrends);
+      
+    } catch (error) {
+      console.error('Error searching products:', error);
+      alert(`Error searching products: ${error.message}`);
+    } finally {
+      setSearchingProducts(null);
     }
   };
 
@@ -402,13 +446,74 @@ const TrendForecaster = () => {
 
                 {/* Content Ideas */}
                 {trend.suggestedContent && (
-                  <div>
+                  <div className="mb-5">
                     <h4 className="font-semibold text-[#373737] mb-3 text-sm">Content Ideas Ready to Create</h4>
                     <div className="grid gap-2">
                       {trend.suggestedContent.map((idea, i) => (
                         <div key={i} className="flex items-start gap-3 bg-[#fdfdfd] rounded-lg p-3 border border-[#e0e0e0] hover:border-[#cd7f77] transition">
                           <span className="text-[#cd7f77] font-bold text-sm min-w-[24px]">{i + 1}.</span>
                           <span className="text-[#373737] text-sm font-medium">{idea}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Find Products Button - Only for fashion categories */}
+                {selectedCategory !== 'products' && selectedAudience === 'teen-girls' && !trend.products && (
+                  <div className="text-center pt-4 border-t border-[#e0e0e0]">
+                    <button
+                      onClick={() => searchProductsForTrend(index)}
+                      disabled={searchingProducts === index}
+                      className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2.5 rounded-lg hover:from-blue-600 hover:to-purple-700 transition font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {searchingProducts === index ? 'Searching Marketplaces...' : '🛍️ Find Products at Amazon, Target & Walmart'}
+                    </button>
+                  </div>
+                )}
+
+                {/* Product Results */}
+                {trend.products && (
+                  <div className="mt-5 pt-5 border-t-2 border-[#cd7f77]">
+                    <h4 className="font-semibold text-[#373737] mb-3 text-lg">🛍️ Products Available at Stores</h4>
+                    <div className="grid gap-3">
+                      {trend.products.map((product, i) => (
+                        <div key={i} className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-4 border-2 border-purple-200">
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex-1">
+                              <h5 className="font-bold text-[#373737] text-base mb-1">{product.name}</h5>
+                              {product.brand && (
+                                <p className="text-sm text-[#666] mb-2">Brand: {product.brand}</p>
+                              )}
+                            </div>
+                            {product.price && (
+                              <div className="text-right ml-3">
+                                <div className="text-2xl font-bold text-purple-700">{product.price}</div>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {product.stores && product.stores.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-3">
+                              {product.stores.map((store, j) => (
+                                <a
+                                  key={j}
+                                  href={store.url || '#'}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-lg border-2 border-purple-300 hover:border-purple-500 hover:bg-purple-50 transition font-semibold text-sm"
+                                >
+                                  <span>{store.name}</span>
+                                  {store.price && <span className="text-purple-700">{store.price}</span>}
+                                  {store.url && <span>→</span>}
+                                </a>
+                              ))}
+                            </div>
+                          )}
+                          
+                          {product.description && (
+                            <p className="text-sm text-[#555] mt-2 italic">{product.description}</p>
+                          )}
                         </div>
                       ))}
                     </div>
