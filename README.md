@@ -1,4 +1,4 @@
-# Josie's Journal Trend Forecaster 🔮
+# Josie's Journal Trend Forecaster 
 
 AI-powered trend intelligence for teen girl content planning. Analyzes Google Trends, social media signals, and e-commerce data to identify fashion styles and trending products 3+ months in advance.
 
@@ -8,27 +8,27 @@ AI-powered trend intelligence for teen girl content planning. Analyzes Google Tr
 
 ---
 
-## ✨ Features
+##  Features
 
-### 🎯 Seasonal Forecasting
+###  Seasonal Forecasting
 - **3+ month advance predictions** for Summer, Fall, Winter, Spring
 - Separate fashion styles and product trends
 - Momentum indicators (rising, peak, emerging, steady)
 
-### 🤖 AI-Powered Analysis
+###  AI-Powered Analysis
 - **Claude API integration** for intelligent trend synthesis
 - Analyzes Google Trends data automatically
 - Optional Pinterest Trends API support
 - Generates ready-to-use content ideas
 
-### 📊 Actionable Insights
+###  Actionable Insights
 - **Specific products** with brands, prices, availability
 - **Fashion breakdowns** with key pieces, color palettes, price points
 - Content opportunity scores (0-100)
 - "Why create now" timing guidance
 - CSV export for content calendars
 
-### 🎨 Beautiful Interface
+###  Beautiful Interface
 - Matches Mom Dashboard aesthetic (terracotta & cream palette)
 - Playfair Display + Montserrat typography
 - Fully responsive design
@@ -36,7 +36,7 @@ AI-powered trend intelligence for teen girl content planning. Analyzes Google Tr
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### 1. Clone or Download
 ```bash
@@ -68,7 +68,7 @@ Outputs to `dist/` folder ready for deployment.
 
 ---
 
-## 📦 What's Included
+##  What's Included
 
 ```
 josies-journal-trend-forecaster/
@@ -88,7 +88,7 @@ josies-journal-trend-forecaster/
 
 ---
 
-## 🔧 Configuration
+##  Configuration
 
 ### Enable Claude API (Production Mode)
 
@@ -163,7 +163,7 @@ pinterest: {
 
 ---
 
-## 🌐 Deployment
+##  Deployment
 
 ### Option 1: Netlify (Recommended - Matches Mom Dashboard)
 
@@ -171,7 +171,7 @@ pinterest: {
 1. Run `npm run build`
 2. Go to https://app.netlify.com/drop
 3. Drag the `dist/` folder
-4. Done! ✅
+4. Done! 
 
 **Method B: CLI**
 ```bash
@@ -209,7 +209,7 @@ Or use the quick deploy script:
 
 ---
 
-## 📅 Weekly Workflow
+##  Weekly Workflow
 
 1. **Monday morning:** Open dashboard
 2. **Click "Analyze Trends"** (or auto-refreshes if cache is >7 days old)
@@ -221,7 +221,7 @@ Or use the quick deploy script:
 
 ---
 
-## 🎯 Use Cases
+##  Use Cases
 
 ### Content Planning
 - Plan blog posts 3 months ahead
@@ -240,7 +240,7 @@ Or use the quick deploy script:
 
 ---
 
-## 🔮 How It Works
+##  How It Works
 
 ### 1. Data Collection
 - **Google Trends:** Search volume, growth rate, related queries
@@ -262,7 +262,7 @@ Or use the quick deploy script:
 
 ---
 
-## 💡 Tips for Best Results
+##  Tips for Best Results
 
 ### Trend Selection
 Focus on trends with:
@@ -285,7 +285,7 @@ Focus on trends with:
 
 ---
 
-## 🛠️ Technical Details
+##  Technical Details
 
 **Frontend:**
 - React 18
@@ -305,20 +305,20 @@ Focus on trends with:
 
 ---
 
-## 📈 Portfolio Value
+##  Portfolio Value
 
 This project demonstrates:
-- ✅ AI API integration (Claude, Google Trends)
-- ✅ React component architecture
-- ✅ Data visualization & UX design
-- ✅ Real-world content strategy application
-- ✅ Thoughtful caching & performance optimization
+-  AI API integration (Claude, Google Trends)
+-  React component architecture
+-  Data visualization & UX design
+-  Real-world content strategy application
+-  Thoughtful caching & performance optimization
 
 Perfect for applications to content strategy or AI product roles at smaller SaaS companies.
 
 ---
 
-## 🤝 Support
+##  Support
 
 **Questions?** See `SETUP_GUIDE.md` for:
 - Detailed setup instructions
@@ -333,13 +333,13 @@ Perfect for applications to content strategy or AI product roles at smaller SaaS
 
 ---
 
-## 📝 License
+##  License
 
 MIT License - Free to use, modify, and deploy for Josie's Journal.
 
 ---
 
-## 🎨 Credits
+##  Credits
 
 **Design:** Matches Mom Dashboard aesthetic by Deloris
 **AI Analysis:** Claude by Anthropic
