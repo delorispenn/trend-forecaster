@@ -1,4 +1,5 @@
 # Josie's Journal Trend Forecaster 
+Link to project: https://cosmic-genie-4d4d4f.netlify.app/
 
 AI-powered trend intelligence for teen girl content planning. Analyzes Google Trends, social media signals, and e-commerce data to identify fashion styles and trending products 3+ months in advance.
 
